@@ -41,6 +41,14 @@ RUN echo "alias ll='ls -la -G'" >> /home/training/.profile
 RUN usermod -G training,www-data training
 
 
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
 RUN apt-get install -y r-base gdebi-core sudo
 RUN wget https://download2.rstudio.org/rstudio-server-0.99.903-amd64.deb
 RUN gdebi -n rstudio-server-0.99.903-amd64.deb
+
+RUN echo "server-app-armor-enabled=0" >> /etc/rstudio/rserver.conf
+
