@@ -41,6 +41,6 @@ RUN echo "alias ll='ls -la -G'" >> /home/training/.profile
 RUN usermod -G training,www-data training
 
 
-RUN apt-get install -y r-base gdebi-core
+RUN apt-get install -y r-base gdebi-core sudo
 RUN wget https://download2.rstudio.org/rstudio-server-0.99.903-amd64.deb
 RUN gdebi -n rstudio-server-0.99.903-amd64.deb
