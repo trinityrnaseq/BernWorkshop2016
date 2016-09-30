@@ -38,7 +38,7 @@ RUN apt-get install -y r-base gdebi-core
 
 RUN wget https://download2.rstudio.org/rstudio-server-0.99.903-amd64.deb
 
-RUN gdebi rstudio-server-0.99.903-amd64.deb
+RUN gdebi -q rstudio-server-0.99.903-amd64.deb
 
 RUN apt-get install -y vim emacs
 
