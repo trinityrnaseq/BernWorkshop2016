@@ -22,7 +22,7 @@ RUN git clone https://github.com/liftoff/GateOne/ && \
 
 
 # ports
-EXPOSE 22 80 443
+EXPOSE 22 80 443 8787
 
 
 # init
