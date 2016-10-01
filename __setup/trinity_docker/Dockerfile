@@ -1,8 +1,31 @@
-FROM ubuntu
+FROM ubuntu:16.04
 MAINTAINER Brian Haas (bhaas@broadinstitute.org)
 # with many thanks to Nicolas Delhomme (nicolas.delhomme@slu.se) and Bastian Schiffthaler (bastian.schiffthaler@umu.se)
 
 
+RUN apt-get update && apt-get install -y build-essential curl unzip apache2 supervisor \
+     default-jre wget git ftp nano python2.7-dev python-pip openssl openssh-server \
+     vim emacs perl gcc g++ perl python automake make \
+	wget git curl libdb-dev \
+    zlib1g-dev bzip2 libncurses5-dev \
+    texlive-latex-base \
+    default-jre \
+    python-pip python-dev \
+    && apt-get clean
+
+RUN curl -L https://cpanmin.us | perl - App::cpanminus
+
+RUN cpanm install DBD::SQLite
+RUN cpanm install XML::Simple
+RUN cpanm install CGI
+RUN cpanm install HTML::Template
+RUN cpanm install DB_File
+RUN cpanm install URI::Escape
+
+
+
+
+###################################################################################
 ## From base-r (https://github.com/rocker-org/rocker/blob/master/r-base/Dockerfile)
 
 RUN apt-get update \ 
@@ -29,7 +52,7 @@ ENV LANG en_US.UTF-8
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		littler \
-                r-cran-littler \
+        r-cran-littler \
 		r-base \
 		r-base-dev \
 		r-recommended \
@@ -49,18 +72,13 @@ RUN apt-get update \
 ## Now on to rest of workshop setup
 
 
-RUN apt-get update && apt-get install -y build-essential curl unzip apache2 supervisor \
-     default-jre wget git ftp nano python2.7-dev python-pip openssl openssh-server \
-     vim emacs
-
 
 RUN groupadd -g 2000 training && useradd -m -u 2000 -g 2000 training
 RUN echo 'training:training' | chpasswd
 RUN chsh -s /bin/bash training
+ENV HOME=/home/training
 RUN echo "alias ll='ls -la -G'" >> /home/training/.profile
 RUN usermod -G training,www-data training
-
-
 
 
 WORKDIR /usr/local/src
@@ -86,7 +104,141 @@ ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 CMD ["/usr/bin/supervisord","-c","/etc/supervisor/conf.d/supervisord.conf"]
 
 
-
 ## install bioconductor packages:
 
 RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("edgeR", dep = TRUE)'
+
+###########
+## Trinity
+
+
+
+## set up tool config and deployment area:
+
+ENV SRC /usr/local/src
+ENV BIN /usr/local/bin
+
+ENV TRINITY_VERSION="2.2.0"
+
+WORKDIR $SRC
+
+RUN TRINITY_URL="https://github.com/trinityrnaseq/trinityrnaseq/archive/v${TRINITY_VERSION}.tar.gz" && \
+    wget $TRINITY_URL -O Trinity-${TRINITY_VERSION}.tar.gz
+
+RUN tar -xvf Trinity-${TRINITY_VERSION}.tar.gz
+
+RUN cd trinityrnaseq-${TRINITY_VERSION} && make
+
+ENV TRINITY_HOME $SRC/trinityrnaseq-${TRINITY_VERSION}
+
+
+RUN cp $TRINITY_HOME/trinity-plugins/htslib/bgzip $BIN
+
+RUN cp $TRINITY_HOME/trinity-plugins/BIN/samtools $BIN
+
+RUN cp $TRINITY_HOME/trinity-plugins/htslib/tabix $BIN
+
+ENV PATH=${TRINITY_HOME}:${PATH}
+
+
+
+RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("DESeq2", dep = TRUE)'
+RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("ape", dep = TRUE)'
+RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("ctc", dep = TRUE)'
+RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("gplots", dep = TRUE)'
+RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("Biobase", dep = TRUE)'
+RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("qvalue", dep = TRUE)'
+
+RUN     apt-get update && apt-get install -y \
+        build-essential wget libghc-zlib-dev libncurses-dev libbz2-dev liblzma-dev libpcre3-dev libxml2-dev \
+        libblas-dev gfortran git unzip ftp libzmq3-dev nano ftp fort77 libreadline-dev libcurl4-openssl-dev libx11-dev libxt-dev \
+        x11-common libcairo2-dev libpng12-dev libreadline6-dev libjpeg8-dev pkg-config && \
+        apt-get clean
+
+
+RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("goseq", dep = TRUE)'
+
+## bowtie
+WORKDIR $SRC
+RUN wget https://sourceforge.net/projects/bowtie-bio/files/bowtie/1.1.2/bowtie-1.1.2-linux-x86_64.zip/download -O bowtie-1.1.2-linux-x86_64.zip && \
+	unzip bowtie-1.1.2-linux-x86_64.zip && \
+	cp bowtie-1.1.2/bowtie* $BIN
+
+
+## RSEM
+RUN mkdir /usr/local/lib/site_perl
+WORKDIR $SRC
+RUN wget https://github.com/deweylab/RSEM/archive/v1.2.31.tar.gz && \
+    tar xvf v1.2.31.tar.gz && \
+    cd RSEM-1.2.31 && \
+    make && \
+    cp rsem-* $BIN && \
+    cp rsem_perl_utils.pm /usr/local/lib/site_perl/
+    
+
+## Kallisto
+WORKDIR $SRC
+RUN wget https://github.com/pachterlab/kallisto/releases/download/v0.42.5/kallisto_linux-v0.42.5.tar.gz && \
+    tar xvf kallisto_linux-v0.42.5.tar.gz && \
+    cp kallisto_linux-v0.42.5/kallisto $BIN
+
+
+## Trinotate
+
+
+WORKDIR $SRC
+RUN git clone --recursive https://github.com/Trinotate/Trinotate.git
+
+
+# blast
+WORKDIR $SRC
+RUN wget ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.5.0/ncbi-blast-2.5.0+-x64-linux.tar.gz && \
+    tar xvf ncbi-blast-2.5.0+-x64-linux.tar.gz && \
+    cp ncbi-blast-2.5.0+/bin/* /usr/local/bin/
+
+# hmmer3:
+WORKDIR $SRC
+RUN wget http://eddylab.org/software/hmmer3/3.1b2/hmmer-3.1b2-linux-intel-x86_64.tar.gz && \
+    tar xvf hmmer-3.1b2-linux-intel-x86_64.tar.gz && \
+    cp hmmer-3.1b2-linux-intel-x86_64/binaries/* /usr/local/bin/
+
+
+# hmmer2
+WORKDIR $SRC
+RUN wget http://eddylab.org/software/hmmer/2.3/hmmer-2.3.tar.gz && \
+    tar xvf hmmer-2.3.tar.gz && \
+    cd hmmer-2.3/ && \
+    ./configure --prefix=`pwd` && \
+    make && \
+    mkdir bin man man/man1 && \
+    make install && \
+    cp bin/hmmsearch /usr/local/bin/hmmsearch2
+
+
+## TransDecoder
+
+WORKDIR $SRC
+RUN git clone https://github.com/TransDecoder/TransDecoder.git && \
+    cd TransDecoder && \
+    make
+
+
+## cleanup in SRC
+
+RUN rm -f $SRC/*.tar.gz $SRC/zip
+RUN rm -rf ${TRINITY_HOME}/sample_data
+
+WORKDIR $BIN
+COPY tmhmm-2.0c.zip $BIN/
+RUN unzip tmhmm-2.0c.zip
+
+COPY signalp-4.1.zip $BIN/
+RUN unzip signalp-4.1.zip
+
+COPY RNAMMER.zip $BIN/
+RUN unzip RNAMMER.zip
+
+RUN rm -rf $BIN/__MACOSX && rm -f $BIN/*.zip
+
+WORKDIR $HOME
+
