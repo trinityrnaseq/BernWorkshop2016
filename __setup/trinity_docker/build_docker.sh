@@ -1,4 +1,4 @@
 #!/bin/sh
 
-docker build -t trinity/bernws2016 .
+docker build -t bernws2016/trinity .
 
