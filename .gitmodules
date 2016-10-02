@@ -1,0 +1,3 @@
+[submodule "single_cell_analysis"]
+	path = single_cell_analysis
+	url = https://github.com/TimothyTickle/single_cell_analysis.git
