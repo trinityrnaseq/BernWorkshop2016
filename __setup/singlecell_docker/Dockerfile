@@ -18,7 +18,7 @@ ENV SRC /usr/local/src
 RUN apt-get update && \
     apt-get install -y unzip wget git \
     r-base r-base-dev \
-    libssl-dev libcurl4-openssl-dev libxml2-dev libxt-dev libgstreamer0.10-0 libjpeg62 ibgstreamer-plugins-base0.10-0 \
+    libssl-dev libcurl4-openssl-dev libxml2-dev libxt-dev libgstreamer0.10-0 ibgstreamer-plugins-base0.10-0 \
     libcairo2-dev
 
 
