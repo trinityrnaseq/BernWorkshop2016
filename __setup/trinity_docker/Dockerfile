@@ -240,5 +240,19 @@ RUN unzip RNAMMER.zip
 
 RUN rm -rf $BIN/__MACOSX && rm -f $BIN/*.zip
 
+
+## FASTQC
+WORKDIR $SRC
+RUN wget http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.5.zip && \
+    unzip fastqc_v0.11.5.zip && \
+    ln -s /usr/local/src/FastQC/fastqc /usr/local/bin/.
+
+
+
+VOLUME /shared
+
+
+
+
 WORKDIR $HOME
 

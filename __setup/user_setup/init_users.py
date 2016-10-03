@@ -17,7 +17,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="instantiate user spaces", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     
-    parser.add_argument("--num_users", type=str, default="", required=True, help="number of users")
+    parser.add_argument("--num_users", type=int, default="", required=True, help="number of users")
     parser.add_argument("--ip_addr", type=str, required=True, help="IP address for server")
 
 
@@ -27,10 +27,7 @@ def main():
 
     args = parser.parse_args()
 
-    if args.debug:
-        logger.setLevel(logging.DEBUG)      
     
-
     apache_user_port = args.apache_base_port
     gateone_user_port = args.gateone_base_port
     rstudio_user_port = args.rstudio_base_port
@@ -38,7 +35,7 @@ def main():
     users_basedir = os.path.abspath("user_spaces")
     os.makedirs(users_basedir)
 
-    for i in range(0, args.num_users):
+    for i in range(1, args.num_users+1):
 
         # create user directory
         user = "user_{:02d}".format(i)
@@ -46,15 +43,24 @@ def main():
         os.makedirs(user_dir)
 
         # launch docker
-        cmd = str("docker run --rm -ti -v {}:{} " +
-                  " -v /shared:/shared:r " +
-                  " -p {}:80 -p {}:443 " +
-                  " --name trinity_{} -d bernws2016/trinity".format("/home/training", user_dir,
-                                                                    apache_user_port,
-                                                                    gateone_user_port,
-                                                                    user))
+        cmd = str("docker run -v {}:{} ".format(user_dir, "/home/training") +
+                  " -v /shared:/shared:ro " +
+                  " -p {}:80 -p {}:443 ".format(apache_user_port, gateone_user_port) +
+                  " --name trinity_{} -d bernws2016/trinity".format(user))
+        
 
-        subprocess.check_output(cmd)
+        #subprocess.check_output(cmd)
+
+        print(cmd)
+
+        cmd = str("docker run -v {}:{} ".format(user_dir, "/home/rstudio") +
+                  " -e USER=training -e PASSWORD=training " +
+                  " -p {}:8787 ".format(rstudio_user_port) +
+                  " --name rstudio_{} -d trinityctat/scell".format(user))
+
+        print(cmd)
+        
+
         
         apache_user_port += 1
         gateone_user_port += 1
