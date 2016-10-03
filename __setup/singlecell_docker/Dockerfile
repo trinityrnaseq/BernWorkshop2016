@@ -57,3 +57,7 @@ RUN wget https://github.com/hms-dbmi/scde/archive/1.99.1.tar.gz && \
     
 # ports
 EXPOSE 8787
+
+
+RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("vioplot", dep = TRUE)'
+

@@ -249,11 +249,27 @@ RUN wget http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.5
     ln -s /usr/local/src/FastQC/fastqc /usr/local/bin/.
 
 
+## Bowtie2
+WORKDIR $SRC
+RUN wget https://sourceforge.net/projects/bowtie-bio/files/bowtie2/2.2.9/bowtie2-2.2.9-linux-x86_64.zip/download -O bowtie2-2.2.9-linux-x86_64.zip && \
+    unzip bowtie2-2.2.9-linux-x86_64.zip && \
+    mv bowtie2-2.2.9/bowtie2* /usr/local/bin/ && \
+    rm *.zip && \
+    rm -r bowtie2-2.2.9
 
-VOLUME /shared
 
+RUN apt-get update && apt-get install -y sqlite3 && apt-get clean
 
+##########################################################################################
+## some hacky configuration to allow TrinotateWeb to use the existing apache2 installation
 
+COPY 000-default.conf /etc/apache2/sites-available/
+
+RUN cp -r /usr/local/src/Trinotate/TrinotateWeb/cgi-bin/* /usr/lib/cgi-bin/. && \
+        cp -r /usr/local/src/Trinotate/PerlLib/* /usr/lib/cgi-bin/PerlLib/. && \
+        mkdir -p /usr/lib/cgi-bin/tmp/tcache && \
+	chown -R www-data /usr/lib/cgi-bin/tmp && \
+	ln -s /etc/apache2/mods-available/cgi.load /etc/apache2/mods-enabled/cgi.load
 
 WORKDIR $HOME
 
