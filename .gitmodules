@@ -1,3 +1,6 @@
 [submodule "single_cell_analysis"]
 	path = single_cell_analysis
 	url = https://github.com/TimothyTickle/single_cell_analysis.git
+[submodule "BernWorkshop2016.wiki"]
+	path = BernWorkshop2016.wiki
+	url = https://github.com/trinityrnaseq/BernWorkshop2016.wiki.git
