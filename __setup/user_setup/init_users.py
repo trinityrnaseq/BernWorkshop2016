@@ -33,33 +33,41 @@ def main():
     rstudio_user_port = args.rstudio_base_port
 
     users_basedir = os.path.abspath("user_spaces")
-    os.makedirs(users_basedir)
+    if not os.path.isdir(users_basedir):
+        os.makedirs(users_basedir)
 
+    print("sudo chown -R training user_spaces")
+    print("sudo chgrp -R training user_spaces")
+
+    
     for i in range(1, args.num_users+1):
 
         # create user directory
         user = "user_{:02d}".format(i)
         user_dir = os.path.sep.join([users_basedir, user])
-        os.makedirs(user_dir)
-
+        if not os.path.isdir(user_dir):
+            os.makedirs(user_dir)
+            
         # launch docker
-        cmd = str("docker run -v {}:{} ".format(user_dir, "/home/training") +
-                  " -v /shared:/shared:ro " +
+        cmd = str("docker run -v {}:/home/training ".format(user_dir) +
+                  " -v /shared:/home/training/shared_ro:ro " +
+                  " -v {}:/var/www/html ".format(user_dir) +
                   " -p {}:80 -p {}:443 ".format(apache_user_port, gateone_user_port) +
                   " --name trinity_{} -d bernws2016/trinity".format(user))
         
-
         #subprocess.check_output(cmd)
 
         print(cmd)
-
-        cmd = str("docker run -v {}:{} ".format(user_dir, "/home/rstudio") +
-                  " -e USER=training -e PASSWORD=training " +
+        
+        cmd = str("docker run " +
+                  " -v {}:{} ".format(user_dir, "/home/training") +
+                  " -v /shared:/shared " +
                   " -p {}:8787 ".format(rstudio_user_port) +
                   " --name rstudio_{} -d trinityctat/scell".format(user))
 
         print(cmd)
-        
+
+        print()
 
         
         apache_user_port += 1

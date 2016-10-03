@@ -10,6 +10,15 @@ ENV BIN /usr/local/bin
 ENV DATA /usr/local/data
 ENV SRC /usr/local/src
 
+### User setup
+RUN groupadd -g 2000 training && useradd -m -u 2000 -g 2000 training
+RUN echo 'training:training' | chpasswd
+RUN chsh -s /bin/bash training
+ENV HOME=/home/training
+RUN echo "alias ll='ls -la -G'" >> /home/training/.profile
+RUN usermod -G training,www-data training
+
+
 ######################
 ## Dependencies and Tools
 ######################
@@ -46,10 +55,5 @@ WORKDIR ${SRC}
 RUN wget https://github.com/hms-dbmi/scde/archive/1.99.1.tar.gz && \
     R CMD INSTALL 1.99.1.tar.gz
     
-## RStudio
-RUN wget https://download1.rstudio.org/rstudio-0.99.903-amd64.deb && \
-    dpkg -i rstudio-0.99.903-amd64.deb
-
-
 # ports
 EXPOSE 8787
