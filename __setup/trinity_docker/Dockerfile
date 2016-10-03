@@ -245,6 +245,7 @@ RUN rm -rf $BIN/__MACOSX && rm -f $BIN/*.zip
 WORKDIR $SRC
 RUN wget http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.5.zip && \
     unzip fastqc_v0.11.5.zip && \
+    chmod 755 /usr/local/src/FastQC/fastqc && \
     ln -s /usr/local/src/FastQC/fastqc /usr/local/bin/.
 
 

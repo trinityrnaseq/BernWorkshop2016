@@ -61,7 +61,7 @@ def main():
         
         cmd = str("docker run " +
                   " -v {}:{} ".format(user_dir, "/home/training") +
-                  " -v /shared:/shared " +
+                  " -v /shared:/home/training/shared_ro:ro " +
                   " -p {}:8787 ".format(rstudio_user_port) +
                   " --name rstudio_{} -d trinityctat/scell".format(user))
 
