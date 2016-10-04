@@ -50,7 +50,7 @@ def main():
             
         # launch docker
         cmd = str("docker run -v {}:/home/training ".format(user_dir) +
-                  " -v /home/training/workshop_shared:/home/training/shared_ro:ro " +
+                  " -v /home/training/workshop_shared/shared:/home/training/shared_ro:ro " +
                   " -v /home/training/workshop_shared/js:/home/training/js:ro " +
                   " -v /home/training/workshop_shared/css:/home/training/css:ro " +
                   " -v {}:/var/www/html ".format(user_dir) +
