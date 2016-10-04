@@ -50,9 +50,9 @@ def main():
             
         # launch docker
         cmd = str("docker run -v {}:/home/training ".format(user_dir) +
-                  " -v /workshop_shared:/home/training/shared_ro:ro " +
-                  " -v /workshop_shared/js:/home/training/js:ro " +
-                  " -v /workshop_shared/css:/home/training/css:ro " +
+                  " -v /home/training/workshop_shared:/home/training/shared_ro:ro " +
+                  " -v /home/training/workshop_shared/js:/home/training/js:ro " +
+                  " -v /home/training/workshop_shared/css:/home/training/css:ro " +
                   " -v {}:/var/www/html ".format(user_dir) +
                   " -p {}:80 -p {}:443 ".format(apache_user_port, gateone_user_port) +
                   " --name trinity_{} -d bernws2016/trinity".format(user))
@@ -63,7 +63,7 @@ def main():
         
         cmd = str("docker run " +
                   " -v {}:{} ".format(user_dir, "/home/training") +
-                  " -v /workshop_shared/shared:/home/training/shared_ro:ro " +
+                  " -v /home/training/workshop_shared/shared:/home/training/shared_ro:ro " +
                   " -p {}:8787 ".format(rstudio_user_port) +
                   " --name rstudio_{} -d trinityctat/scell".format(user))
 
