@@ -61,3 +61,9 @@ EXPOSE 8787
 
 RUN Rscript -e 'source("http://bioconductor.org/biocLite.R");library(BiocInstaller); biocLite("vioplot", dep = TRUE)'
 
+# for seurat, needs java and unfortunately writes to /usr/local/lib/R/site-library! and needs open permissions
+
+RUN apt-get update && apt-get install -y default-jre htop && apt-get clean
+
+RUN chmod 777 /usr/local/lib/R/site-library
+
