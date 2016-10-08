@@ -19,7 +19,6 @@ def main():
     
     parser.add_argument("--ip_addr", type=str, required=True, help="IP address for server")
     parser.add_argument("--attendee_list", type=str, required=True, help="attendee list file")
-    
     parser.add_argument("--apache_base_port", type=int, default=8001, help="base port for apache")
     parser.add_argument("--gateone_base_port", type=int, default=9001, help="base port for gateone")
     
@@ -38,20 +37,21 @@ def main():
     
 
     print("<table shade='rows'>\n")
-    print ("<tr><th>Attendee</th><th>SSH Terminal</th><th>Apache Viewer</th></tr>")
+    print ("<tr><th>id</th><th>Attendee</th><th>SSH Terminal</th><th>Apache Viewer</th></tr>")
     
+    user_id = 1
     with open(args.attendee_list) as f:
         for attendee_name in f:
             attendee_name = attendee_name.rstrip()
-            print("<tr><td>{}</td>".format(attendee_name) +
+            print("<tr><td>{}</td>".format(user_id) +
+                  "<td>{}</td>".format(attendee_name) +
                   "<td><a href=\"{}\" target='sshterm'>ssh terminal</a></td>".format(url_maker(args.ip_addr, gateone_user_port)) +
                   "<td><a href=\"{}\" target='apacheview'>apache</a></td>".format(url_maker(args.ip_addr, apache_user_port)) +
                   "</tr>")
-
-                    
+            
             apache_user_port += 1
             gateone_user_port += 1
-
+            user_id += 1
 
     print("</table></body></html>")
     

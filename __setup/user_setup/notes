@@ -1,2 +1,4 @@
+~/BernWorkshop2016/__setup/user_setup/init_users.py --num_users 30 --ip_addr binfservapp05.unibe.ch --apache_base_port 8001 --gateone_base_port 9001 --rstudio_base_port 10001  > cmds.list
+
 /Users/bhaas/GITHUB/BernWorkshop2016/__setup/user_setup/attendee_list_to_html_table.py  --ip_addr binfservapp05.unibe.ch --apache_base_port 8005 --gateone_base_port 9005 --attendee_list attendees.list.txt  > trinity.html
 
