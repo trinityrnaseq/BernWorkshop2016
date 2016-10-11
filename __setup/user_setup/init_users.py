@@ -19,8 +19,8 @@ def main():
     
     parser.add_argument("--num_users", type=int, default="", required=True, help="number of users")
     parser.add_argument("--ip_addr", type=str, required=True, help="IP address for server")
-
-
+    parser.add_argument("--user_id_start", type=int, required=True, help="index to start user IDs (ex. 1)")
+    
     parser.add_argument("--apache_base_port", type=int, default=8001, help="base port for apache")
     parser.add_argument("--gateone_base_port", type=int, default=9001, help="base port for gateone")
     parser.add_argument("--rstudio_base_port", type=int, default=10001, help="base port for rstudio")
@@ -39,9 +39,10 @@ def main():
     print("sudo chown -R training user_spaces")
     print("sudo chgrp -R training user_spaces")
 
+    user_id_start = args.user_id_start
     
-    for i in range(1, args.num_users+1):
-
+    for i in range(user_id_start, user_id_start + args.num_users + 1):
+        
         # create user directory
         user = "user_{:02d}".format(i)
         user_dir = os.path.sep.join([users_basedir, user])
@@ -51,9 +52,9 @@ def main():
         # launch docker
         cmd = str("docker run -v {}:/home/training ".format(user_dir) +
                   " -v /home/training/workshop_shared/shared:/home/training/shared_ro:ro " +
-                  " -v /home/training/workshop_shared/js:/home/training/js:ro " +
-                  " -v /home/training/workshop_shared/css:/home/training/css:ro " +
                   " -v {}:/var/www/html ".format(user_dir) +
+                  " -v /home/training/workshop_shared/js:/var/www/html/js:ro " +
+                  " -v /home/training/workshop_shared/css:/var/www/html/css:ro " +
                   " -p {}:80 -p {}:443 ".format(apache_user_port, gateone_user_port) +
                   " --name trinity_{} -d bernws2016/trinity".format(user))
         

@@ -19,14 +19,17 @@ def main():
     
     parser.add_argument("--ip_addr", type=str, required=True, help="IP address for server")
     parser.add_argument("--attendee_list", type=str, required=True, help="attendee list file")
+    parser.add_argument("--user_id_start", type=int, required=True, help="index to start user IDs (ex. 1)")
     parser.add_argument("--apache_base_port", type=int, default=8001, help="base port for apache")
     parser.add_argument("--gateone_base_port", type=int, default=9001, help="base port for gateone")
+    parser.add_argument("--rstudio_base_port", type=int, default=10001, help="base port for rstudio")
     
     args = parser.parse_args()
 
     
     apache_user_port = args.apache_base_port
     gateone_user_port = args.gateone_base_port
+    rstudio_user_port = args.rstudio_base_port
     
     print("<html><body><h1>Trinity RNA-Seq Workshop in Bern, Switzerland (October 10-11, 2016)</h1></body></html>")
 
@@ -37,22 +40,25 @@ def main():
     
 
     print("<table shade='rows'>\n")
-    print ("<tr><th>id</th><th>Attendee</th><th>SSH Terminal</th><th>Apache Viewer</th></tr>")
+    print ("<tr><th>id</th><th>Attendee</th><th>SSH Terminal</th><th>Apache Viewer</th><th>Rstudio</th></tr>")
     
-    user_id = 1
+    user_id = args.user_id_start
     with open(args.attendee_list) as f:
         for attendee_name in f:
             attendee_name = attendee_name.rstrip()
             print("<tr><td>{}</td>".format(user_id) +
                   "<td>{}</td>".format(attendee_name) +
-                  "<td><a href=\"{}\" target='sshterm'>ssh terminal</a></td>".format(url_maker(args.ip_addr, gateone_user_port)) +
-                  "<td><a href=\"{}\" target='apacheview'>apache</a></td>".format(url_maker(args.ip_addr, apache_user_port)) +
+                  "<td><a href=\"{}\" target='_sshterm'>ssh terminal</a></td>".format(url_maker(args.ip_addr, gateone_user_port)) +
+                  "<td><a href=\"{}\" target='_apacheview'>apache</a></td>".format(url_maker(args.ip_addr, apache_user_port)) +
+                  "<td><a href=\"{}\" target='_rstdioview'>rstudio</a></td>".format(url_maker(args.ip_addr, rstudio_user_port)) +
                   "</tr>")
             
             apache_user_port += 1
             gateone_user_port += 1
-            user_id += 1
+            rstudio_user_port += 1
 
+            user_id += 1
+    
     print("</table></body></html>")
     
     sys.exit(0)
