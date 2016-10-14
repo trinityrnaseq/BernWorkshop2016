@@ -34,6 +34,11 @@ single cell ws materials:
     su training
     cd $HOME
     tar xvf TRINITY_Bern_2016_ws_data_bundle.tar.gz
+
+    # pull down the single cell workshop materials into the shared resources area
+    cd workshop_shared/shared
+    git clone https://github.com/TimothyTickle/single_cell_analysis.git
+    
     exit
 
 
