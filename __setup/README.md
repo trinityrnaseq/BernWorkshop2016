@@ -112,4 +112,30 @@ and then visit:
 
 to view the page in your web browser.
 
+# Other Docker tidbits:
+
+## Removing all docker containers:
+
+If you want to remove all the student Docker containers, you can run the following script:
+
+    ~/BernWorkshop2016/__setup/user_setup/remove_user_dockers.sh
+
+which essentially runs 'docker stop' and 'docker rm' to first stop and then remove the docker container.
+
+## Dealing with hang-ups
+
+If the ssh-terminal or Rstudio ends up hanging for some reason, you can just restart that user's docker container.  Examine the port number in the student's web URL and then find that running docker instance:
+
+    docker ps | grep $port_number
+
+Get the 'CONTAINER ID' (ex. 1326d98012af)  and then restart it:
+
+    docker restart 1326d98012af
+
+This will immediately reset it and the student will carry on from where they left off.
+
+## Running all of this on Amazon:
+
+See this excellent documentation from Nico Delhomme [here on github](https://github.com/ekorpela/cloud-vm-workshop/blob/master/materials/NicolasDelhomme/using_docker_on_aws_for_bioinformatics_workshops-practical.pdf), which provides a walkthrough for setting up a system just like this on Amazon. You simply need to just set up your instance, and then follow the instructions above for further setup.  Get the IP address for your Amazon machine and use that in place of the http://binfservapp05.unibe.ch/ server.
+
 
