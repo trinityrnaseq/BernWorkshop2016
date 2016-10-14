@@ -14,17 +14,17 @@ single cell ws materials:
 
 ### Create a user:pass of training:training
 
-   sudo groupadd -g 2000 training
-   sudo useradd -m -u 2000 -g 2000 training
-   echo 'training:training' | sudo chpasswd
-   sudo usermod -G training,www-data training
-   sudo chsh training -s /bin/bash
+    sudo groupadd -g 2000 training
+    sudo useradd -m -u 2000 -g 2000 training
+    echo 'training:training' | sudo chpasswd
+    sudo usermod -G training,www-data training
+    sudo chsh training -s /bin/bash
 
 
 ### Pull the Docker images from Dockerhub:
 
-   docker pull bernws2016/trinity
-   docker pull trinityctat/scell
+    docker pull bernws2016/trinity
+    docker pull trinityctat/scell
 
 
 
