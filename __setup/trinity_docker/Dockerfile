@@ -228,19 +228,6 @@ RUN git clone https://github.com/TransDecoder/TransDecoder.git && \
 RUN rm -f $SRC/*.tar.gz $SRC/zip
 RUN rm -rf ${TRINITY_HOME}/sample_data
 
-WORKDIR $BIN
-COPY tmhmm-2.0c.zip $BIN/
-RUN unzip tmhmm-2.0c.zip
-
-COPY signalp-4.1.zip $BIN/
-RUN unzip signalp-4.1.zip
-
-COPY RNAMMER.zip $BIN/
-RUN unzip RNAMMER.zip
-
-RUN rm -rf $BIN/__MACOSX && rm -f $BIN/*.zip
-
-
 ## FASTQC
 WORKDIR $SRC
 RUN wget http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.5.zip && \

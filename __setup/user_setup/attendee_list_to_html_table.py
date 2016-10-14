@@ -20,9 +20,9 @@ def main():
     parser.add_argument("--ip_addr", type=str, required=True, help="IP address for server")
     parser.add_argument("--attendee_list", type=str, required=True, help="attendee list file")
     parser.add_argument("--user_id_start", type=int, required=True, help="index to start user IDs (ex. 1)")
-    parser.add_argument("--apache_base_port", type=int, default=8001, help="base port for apache")
-    parser.add_argument("--gateone_base_port", type=int, default=9001, help="base port for gateone")
-    parser.add_argument("--rstudio_base_port", type=int, default=10001, help="base port for rstudio")
+    parser.add_argument("--apache_base_port", type=int, default=None, help="base port for apache")
+    parser.add_argument("--gateone_base_port", type=int, default=None, help="base port for gateone")
+    parser.add_argument("--rstudio_base_port", type=int, default=None, help="base port for rstudio")
     
     args = parser.parse_args()
 
@@ -31,7 +31,7 @@ def main():
     gateone_user_port = args.gateone_base_port
     rstudio_user_port = args.rstudio_base_port
     
-    print("<html><body><h1>Trinity RNA-Seq Workshop in Bern, Switzerland (October 10-11, 2016)</h1></body></html>")
+    print("<html><body><h1>Single Cell RNA-Seq Workshop in <br>Bern, Switzerland (October 12-13, 2016)</h1></body></html>")
 
     print("<style>\n" +
           "tr:nth-child(even) {background: #CCC}\n" +
@@ -41,7 +41,7 @@ def main():
 
     print("<table shade='rows'>\n")
     print ("<tr><th>id</th><th>Attendee</th><th>SSH Terminal</th><th>Apache Viewer</th><th>Rstudio</th></tr>")
-    
+        
     user_id = args.user_id_start
     with open(args.attendee_list) as f:
         for attendee_name in f:
